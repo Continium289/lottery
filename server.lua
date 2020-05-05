@@ -17,7 +17,7 @@ addEventHandler( "onPickupHit", resourceRoot, function( player )
     local player_login = player:getAccount():getName()
     if player:getType() ~= "player" or tParticipation[ player_login ] or tPickupsBusy[ source ] then return end
 
-    triggerClientEvent( player, "DB_base_open_window", resourceRoot )
+    triggerClientEvent( player, "lottery_open_window", resourceRoot )
     tPickupsBusy[ source ] = player
 end )
 
@@ -30,8 +30,8 @@ addCommandHandler( "create_marker", function( thePlayer, _ )
     outputChatBox( "Пикап успешно создан!", thePlayer )
 end )
 
-addEvent( "DB_base_on_press_button_to_begin", true )
-addEventHandler( "DB_base_on_press_button_to_begin", resourceRoot, function( progress )
+addEvent( "lottery_on_press_button_to_begin", true )
+addEventHandler( "lottery_on_press_button_to_begin", resourceRoot, function( progress )
     local player_login = client:getAccount():getName()
     if client:getMoney() < 50000 or tParticipation[ player_login ] or progress ~= 0  then 
         set_pickup_unbusy( client )
@@ -45,7 +45,7 @@ addEventHandler( "DB_base_on_press_button_to_begin", resourceRoot, function( pro
     local player = client
     local timer = setTimer( function()
         progress = progress + 1
-        triggerClientEvent( player, "DB_base_set_timer_value", resourceRoot, progress )
+        triggerClientEvent( player, "lottery_set_timer_value", resourceRoot, progress )
 
         if progress == 100 then
             local tSequence = {}
@@ -58,7 +58,7 @@ addEventHandler( "DB_base_on_press_button_to_begin", resourceRoot, function( pro
                 return ( first + offset ) % 10 > ( second + offset ) % 10
             end )
 
-            triggerClientEvent( player, "DB_base_on_change_picture_fone", resourceRoot, tSequence )
+            triggerClientEvent( player, "lottery_on_change_picture_fone", resourceRoot, tSequence )
             tPlayerAttempt[ player ] = 0
             iprint(tSequence)
             tTimers[ player ] = nil
@@ -83,7 +83,7 @@ local function onExit_handler( _, _, boolean_quit )
 
     if boolean_quit then return end
 
-    triggerClientEvent( source, "DB_base_destroy_UI", resourceRoot )
+    triggerClientEvent( source, "lottery_destroy_UI", resourceRoot )
 end
 
 addEventHandler( "onPlayerLogout", root, onExit_handler )
@@ -97,13 +97,13 @@ addEventHandler( "onResourceStart", resourceRoot, function()
 
 end )
 
-addEvent( "DB_base_set_pickup_free", true )
-addEventHandler( "DB_base_set_pickup_free", resourceRoot, function()
+addEvent( "lottery_set_pickup_free", true )
+addEventHandler( "lottery_set_pickup_free", resourceRoot, function()
     set_pickup_unbusy( client )
 end )
 
-addEvent( "DB_base_on_correcting_attempts", true )
-addEventHandler( "DB_base_on_correcting_attempts", resourceRoot, function( number_picture )
+addEvent( "lottery_on_correcting_attempts", true )
+addEventHandler( "lottery_on_correcting_attempts", resourceRoot, function( number_picture )
     tPlayerAttempt[ client ] = tPlayerAttempt[ client ] + 1
     local player_attempts = tPlayerAttempt[ client ]
     local player_current_prize = tPlayerPrize[ client ] and tPlayerPrize[ client ] or 0
@@ -128,7 +128,7 @@ addEventHandler( "DB_base_on_correcting_attempts", resourceRoot, function( numbe
         outputChatBox( "Вы выиграли " .. tostring( prize ) .. " рублей!", client )
         tPlayerPrize[ client ] = nil
         set_pickup_unbusy( client )
-        triggerClientEvent( client, "DB_base_destroy_UI", resourceRoot )
+        triggerClientEvent( client, "lottery_destroy_UI", resourceRoot )
     end
 
 end )

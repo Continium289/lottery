@@ -37,38 +37,38 @@ local function init_ui_elements()
 	tUI_elements.progress_bar = dgs:dgsCreateProgressBar( 100, 700, 600 ,10, false, tUI_elements.window )
 
 	addEventHandler( "onDgsMouseClickDown", tUI_elements.button, function()
-		triggerServerEvent( "DB_base_on_press_button_to_begin", resourceRoot, dgs:dgsGetProperty( tUI_elements.progress_bar, "progress" ) )
+		triggerServerEvent( "lottery_on_press_button_to_begin", resourceRoot, dgs:dgsGetProperty( tUI_elements.progress_bar, "progress" ) )
 	end, false )
 
 	addEventHandler( "onDgsDestroy", tUI_elements.window, function()
 		showCursor( false )
 		tUI_elements = {}
-		triggerServerEvent( "DB_base_set_pickup_free", resourceRoot )
+		triggerServerEvent( "lottery_set_pickup_free", resourceRoot )
 	end, false )
 	
 end
 
-addEvent( "DB_base_open_window", true )
-addEventHandler( "DB_base_open_window", resourceRoot, function()
+addEvent( "lottery_open_window", true )
+addEventHandler( "lottery_open_window", resourceRoot, function()
 	if tUI_elements.window then return end
 
 	init_ui_elements()
 	showCursor( true )
 end )
 
-addEvent( "DB_base_set_timer_value", true )
-addEventHandler( "DB_base_set_timer_value", resourceRoot, function( progress )
+addEvent( "lottery_set_timer_value", true )
+addEventHandler( "lottery_set_timer_value", resourceRoot, function( progress )
 	dgs:dgsProgressBarSetProgress( tUI_elements.progress_bar, progress )
 end )
 
-addEvent( "DB_base_destroy_UI", true )
-addEventHandler( "DB_base_destroy_UI", resourceRoot, function()
+addEvent( "lottery_destroy_UI", true )
+addEventHandler( "lottery_destroy_UI", resourceRoot, function()
 	destroyElement( tUI_elements.window )
 	tUI_elements = {}
 end )
 
-addEvent( "DB_base_on_change_picture_fone", true )
-addEventHandler( "DB_base_on_change_picture_fone", resourceRoot, function( tSequence )
+addEvent( "lottery_on_change_picture_fone", true )
+addEventHandler( "lottery_on_change_picture_fone", resourceRoot, function( tSequence )
 	tUI_pictures_data = tSequence
 
 	for i = 1, 10 do
@@ -87,7 +87,7 @@ addEventHandler( "DB_base_on_change_picture_fone", resourceRoot, function( tSequ
 				end
 
 				init_image( source, ordinary_image, "images/opened.png", false )
-				triggerServerEvent( "DB_base_on_correcting_attempts", resourceRoot, number_picture )
+				triggerServerEvent( "lottery_on_correcting_attempts", resourceRoot, number_picture )
 				tUI_pictures_data[ i ] = nil
 			end
 		end, false )
