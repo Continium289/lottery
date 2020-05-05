@@ -1,0 +1,18 @@
+﻿<meta>
+	
+	<script src="server.lua" />
+	<script src="client.lua" type="client" />
+	<script src="initialization.lua" type="client" />
+	<file src="images/test.png"/>
+	<file src="images/button.png"/>
+	<file src="images/go.png"/>
+	<file src="images/rules.png"/>
+	<file src="images/zamok.png"/>
+	<file src="images/open.png"/>
+	<file src="images/7.png"/>
+	<file src="images/5.png"/>
+	<file src="images/min_win.png"/>
+	<file src="images/opened.png"/>
+
+	<oop>true</oop>
+</meta>
