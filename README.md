@@ -1,1 +1,1 @@
-lottery script
+# lottery script
