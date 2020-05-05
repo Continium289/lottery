@@ -1,6 +1,6 @@
 dgs = exports.dgs
-local tUI_elements = {}
-local tUI_pictures = {}
+local tUI_elements 		= {}
+local tUI_pictures_data = {}
 
 local function init_ui_elements()
 	tUI_elements.window = dgs:dgsCreateWindow( 200, 0, 900, 800, "Лотерея", false )
@@ -24,26 +24,22 @@ local function init_ui_elements()
 	tUI_elements.button = dgs:dgsCreateImage( 600, 400, 200, 150, nil, false, tUI_elements.window )
 	init_image( tUI_elements.button, "images/button.png", "images/go.png", false )
 
-	dgs:dgsCreateImage(50,400,500,200,"images/rules.png",false,tUI_elements.window )
+	dgs:dgsCreateImage( 50, 400, 500, 200, "images/rules.png", false, tUI_elements.window )
 
 
-	dgs:dgsRemoveEasingFunction("testing5590")
-	dgs:dgsAddEasingFunction("testing5590",[[
-		local tmp_1 = setting[3][1] + progress * ( setting[2][1] - setting[3][1])
-		local tmp_2 = setting[3][2] + progress * ( setting[2][2] - setting[3][2])
-		return { tmp_1, tmp_2 }
-	]])
+	-- dgs:dgsRemoveEasingFunction("testing5590")
+	-- dgs:dgsAddEasingFunction("testing5590",[[
+	-- 	local tmp_1 = setting[3][1] + progress * ( setting[2][1] - setting[3][1])
+	-- 	local tmp_2 = setting[3][2] + progress * ( setting[2][2] - setting[3][2])
+	-- 	return { tmp_1, tmp_2 }
+	-- ]])
+
 	tUI_elements.progress_bar = dgs:dgsCreateProgressBar( 100, 700, 600 ,10, false, tUI_elements.window )
 
 	addEventHandler( "onDgsMouseClickDown", tUI_elements.button, function()
 		triggerServerEvent( "DB_base_on_press_button_to_begin", resourceRoot, dgs:dgsGetProperty( tUI_elements.progress_bar, "progress" ) )
 	end, false )
 
-	-- local progress = 20
-	-- setTimer( function()
-	-- 	dgs:dgsProgressBarSetProgress( progress_bar, progress)
-	-- 	progress = progress + 20
-	-- end, 1000, 5)
 	addEventHandler( "onDgsDestroy", tUI_elements.window, function()
 		showCursor( false )
 		tUI_elements = {}
@@ -73,20 +69,26 @@ end )
 
 addEvent( "DB_base_on_change_picture_fone", true )
 addEventHandler( "DB_base_on_change_picture_fone", resourceRoot, function( tSequence )
-	tUI_pictures = tSequence
+	tUI_pictures_data = tSequence
+
 	for i = 1, 10 do
 		init_image( tUI_elements.images[ i ], "images/open.png", "images/zamok.png", false )
 		addEventHandler( "onDgsMouseClickDown", tUI_elements.images[ i ], function()
-			local number_picture = tUI_pictures[ i ]
+			local number_picture = tUI_pictures_data[ i ]
+			if not number_picture then return end
+
 			if number_picture then
 				local ordinary_image
+
 				if number_picture ~= 5 and number_picture ~= 7 then
 					ordinary_image = "images/min_win.png"
 				else
 					ordinary_image = "images/" .. tostring( number_picture ) .. ".png"
 				end
+
 				init_image( source, ordinary_image, "images/opened.png", false )
-				tUI_pictures[ i ] = nil
+				triggerServerEvent( "DB_base_on_correcting_attempts", resourceRoot, number_picture )
+				tUI_pictures_data[ i ] = nil
 			end
 		end, false )
 	end

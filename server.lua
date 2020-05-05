@@ -1,6 +1,8 @@
 local tParticipation = {}
 local tTimers        = {}
 local tPickupsBusy   = {}
+local tPlayerAttempt = {}
+local tPlayerPrize   = {}
 
 local function set_pickup_unbusy( thePlayer )
     for pickup, player in pairs( tPickupsBusy ) do
@@ -50,11 +52,14 @@ addEventHandler( "DB_base_on_press_button_to_begin", resourceRoot, function( pro
             for i = 1, 10 do
                 tSequence[ i ] = i
             end
+
             local offset = math.random( 1, 9 )
-            table.sort( tSequence, function( first, second )
+            table.sort( tSequence, function( first, second ) -- сортируем для рандома
                 return ( first + offset ) % 10 > ( second + offset ) % 10
             end )
+
             triggerClientEvent( player, "DB_base_on_change_picture_fone", resourceRoot, tSequence )
+            tPlayerAttempt[ player ] = 0
             iprint(tSequence)
             tTimers[ player ] = nil
         end
@@ -70,6 +75,11 @@ local function onExit_handler( _, _, boolean_quit )
     end
 
     set_pickup_unbusy( source )
+
+    if tPlayerAttempt[ source ] then
+        tPlayerAttempt[ source ] = nil
+        tPlayerPrize[ source ] = nil
+    end
 
     if boolean_quit then return end
 
@@ -90,4 +100,35 @@ end )
 addEvent( "DB_base_set_pickup_free", true )
 addEventHandler( "DB_base_set_pickup_free", resourceRoot, function()
     set_pickup_unbusy( client )
+end )
+
+addEvent( "DB_base_on_correcting_attempts", true )
+addEventHandler( "DB_base_on_correcting_attempts", resourceRoot, function( number_picture )
+    tPlayerAttempt[ client ] = tPlayerAttempt[ client ] + 1
+    local player_attempts = tPlayerAttempt[ client ]
+    local player_current_prize = tPlayerPrize[ client ] and tPlayerPrize[ client ] or 0
+    local prize_to_picture
+
+    if number_picture == 5 then
+        prize_to_picture = 50000
+    elseif number_picture == 7 then
+        prize_to_picture = 70000
+    else
+        prize_to_picture = 500
+    end
+
+    if prize_to_picture > player_current_prize then
+        tPlayerPrize[ client ] = prize_to_picture
+    end
+
+    if player_attempts == 3 then
+        tPlayerAttempt[ client ] = nil
+        local prize = tPlayerPrize[ client ]
+        client:giveMoney( prize )
+        outputChatBox( "Вы выиграли " .. tostring( prize ) .. " рублей!", client )
+        tPlayerPrize[ client ] = nil
+        set_pickup_unbusy( client )
+        triggerClientEvent( client, "DB_base_destroy_UI", resourceRoot )
+    end
+
 end )
